@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="300" h="200">
+    <properties colour="-1" name="Week 1 - Brep and Transform" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="240" h="140">
+    <properties colour="-1" name="Brep Transform Script" selected="false" />
+    <inputs count="0" />
+    <outputs count="2">
+      <output guid="1" name="original_brep" optional="false" />
+      <output guid="2" name="transformed_brep" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Create sphere and convert to Brep
+sphere = geo.Sphere(geo.Point3d(0,0,0), 5)
+brep = geo.Brep.CreateFromSphere(sphere)
+
+# Create transformation matrix
+xform = geo.Transform.Translation(10, 0, 0)
+
+# Duplicate and transform brep
+brep_x = brep.Duplicate()
+brep_x.Transform(xform)
+
+# Add to Rhino document
+sc.doc.Objects.AddBrep(brep)
+sc.doc.Objects.AddBrep(brep_x)
+sc.doc.Views.Redraw()
+
+# Output for Grasshopper
+original_brep = brep
+transformed_brep = brep_x
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="320" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 1 - Brep and Transform
+
+This script demonstrates:
+- Creating Brep from geometric primitives
+- Creating transformation matrices
+- Duplicating geometry objects
+- Applying transformations to Breps
+- Translation operations
+
+Run this script to see Brep creation and transformation.</UserText>
+  </object>
+</grasshopper>

@@ -1,5 +1,102 @@
-title: 자동화설계 특강 - RhinoPython & 한국 필지 기반 지오메트리 설계
-description: RhinoPython과 한국 필지(GIS) 데이터를 활용한 자동화설계 실습 강의. 기초 문법부터 도시분석 응용까지 6주에 걸쳐 학습합니다. 본 강의는 Rhino 8의 CPython 환경을 기준으로 구성됩니다.
+# 자동화설계 특강 - RhinoPython & 한국 필지 기반 지오메트리 설계
+
+RhinoPython과 한국 필지(GIS) 데이터를 활용한 자동화설계 실습 강의입니다. 기초 문법부터 도시분석 응용까지 5주에 걸쳐 학습합니다. 본 강의는 Rhino 8의 CPython 환경을 기준으로 구성됩니다.
+
+## 프로젝트 구조
+
+```
+DesignAutomationLecture/
+├── Week1_Geometry_Basics/          # 1주차: 기하학적 기초
+│   ├── 01_points_vectors.py        
+│   ├── 01_points_vectors.ghx       # Grasshopper 파일
+│   ├── 02_curves_surfaces.py       
+│   ├── 02_curves_surfaces.ghx      
+│   ├── 03_brep_transform.py        
+│   ├── 03_brep_transform.ghx       
+│   └── README.md                   
+├── Week2_GIS_Integration/          # 2주차: GIS 데이터 연동
+│   ├── match_parcels_buildings.py  
+│   ├── match_parcels_buildings.ghx 
+│   └── README.md                   
+├── Week3_Urban_Analysis/           # 3주차: 도시 분석
+│   ├── isovist_rays.py             
+│   ├── isovist_rays.ghx            
+│   ├── urban_block_segmentation.py 
+│   ├── urban_block_segmentation.ghx
+│   └── README.md                   
+├── Week4_Parcel_Analysis/          # 4주차: 필지 분석
+│   ├── mass_by_parcel.py           
+│   ├── mass_by_parcel.ghx          
+│   └── README.md                   
+├── Week5_Advanced_Terrain/         # 5주차: 고급 지형 분석
+│   ├── view_slope_adjust.py        
+│   ├── view_slope_adjust.ghx       
+│   └── README.md                   
+├── examples/                       # 원본 예제 파일들 (참고용)
+│   └── ...                         
+└── README.md                       # 이 파일
+```
+
+## 주차별 학습 내용
+
+### Week 1 - Geometry Basics (기하학적 기초)
+- RhinoPython 개발 환경 및 기본 문법
+- Point3d, Vector3d, Curve, Surface, Brep 객체 생성
+- 지오메트리 변환(Translation, Rotation, Scale)
+- scriptcontext를 통한 Rhino 문서 연동
+
+### Week 2 - GIS Integration (GIS 데이터 연동)  
+- 국토지리정보원 수치지형도 SHP 데이터 활용
+- pyshp 라이브러리를 통한 Shapefile 읽기
+- 필지와 건축물 데이터 공간 매칭
+- GIS 좌표를 Rhino 지오메트리로 변환
+
+### Week 3 - Urban Analysis (도시 분석)
+- 아이소비스트(Isovist) 시각 분석
+- 방사형 레이 패턴 생성
+- 도시 블록 세분화 및 중심점 계산
+- 시각적 분석을 위한 기하학적 도구
+
+### Week 4 - Parcel Analysis (필지 분석)
+- CSV 데이터 기반 지오메트리 생성
+- 필지 면적에 따른 건축 볼륨 계산
+- 데이터 기반 설계 방법론
+- 파라메트릭 높이 조절 시스템
+
+### Week 5 - Advanced Terrain (고급 지형 분석)
+- 지형 경사도에 반응하는 건축 설계
+- 높이 조절을 통한 시야 확보
+- 지형 적응형 파라메트릭 디자인
+- 환경 요소를 고려한 건축 배치
+
+## 사용 방법
+
+### Python 스크립트 실행
+1. Rhino 8 실행
+2. `EditPythonScript` 명령 실행
+3. 각 주차별 폴더의 .py 파일 열기
+4. F5 키로 스크립트 실행
+
+### Grasshopper 파일 실행
+1. Grasshopper 실행
+2. 각 주차별 폴더의 .ghx 파일 열기
+3. Python Script 컴포넌트의 코드 확인
+4. 필요시 입력 파라미터 조정 후 실행
+
+## 필요 환경
+- **Rhino 8**: CPython 환경 지원
+- **Grasshopper**: Rhino 8에 포함
+- **Python 패키지**: 
+  - `pyshp` (Week 2에서 필요)
+  - 기본 Python 라이브러리들 (csv, math 등)
+
+## 설치 방법
+```python
+# Rhino 8 CPython 환경에서
+# r: pyshp
+import shapefile
+```
+
 weeks:
 
   - title: Week 1 - RhinoPython 기초 및 지오메트리 생성

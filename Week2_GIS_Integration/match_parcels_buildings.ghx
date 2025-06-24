@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="400" h="200">
+    <properties colour="-1" name="Week 2 - GIS Integration: Parcel-Building Matching" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="300" h="140">
+    <properties colour="-1" name="Parcel Building Match Script" selected="false" />
+    <inputs count="2">
+      <input guid="1" name="parcel_shp_path" optional="false" />
+      <input guid="2" name="building_shp_path" optional="false" />
+    </inputs>
+    <outputs count="1">
+      <output guid="1" name="matched_parcels" optional="false" />
+    </outputs>
+    <Script_Code"># r: pyshp
+import shapefile
+import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Default file paths if not provided
+if not parcel_shp_path:
+    parcel_shp_path = "TL_PARCEL.shp"
+if not building_shp_path:
+    building_shp_path = "TL_SPRD_BUILD.shp"
+
+try:
+    # Read shapefiles
+    parcel_sf = shapefile.Reader(parcel_shp_path)
+    building_sf = shapefile.Reader(building_shp_path)
+
+    parcel_shapes = [(s.shape.points, s.record) for s in parcel_sf.iterShapeRecords()]
+    building_shapes = [(s.shape.points, s.record) for s in building_sf.iterShapeRecords()]
+
+    matched_parcels = []
+
+    for p_coords, p_rec in parcel_shapes:
+        # Create parcel polygon
+        p_poly = geo.Polyline([geo.Point3d(x, y, 0) for x, y in p_coords])
+        p_brep = geo.Brep.CreatePlanarBreps(p_poly.ToNurbsCurve())
+        
+        matched = []
+        for b_coords, b_rec in building_shapes:
+            pt = geo.Point3d(b_coords[0][0], b_coords[0][1], 0)
+            if p_brep and p_brep[0].IsPointInside(pt, 0.01, True):
+                matched.append(b_rec)
+
+        if matched:
+            sc.doc.Objects.AddPolyline(p_poly)
+            matched_parcels.append(p_poly)
+    
+    sc.doc.Views.Redraw()
+    print(f"Found {len(matched_parcels)} parcels with buildings")
+
+except Exception as e:
+    print(f"Error: {e}")
+    print("Please ensure SHP files are in the correct path")
+    matched_parcels = []
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="380" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 2 - GIS Integration
+
+This script demonstrates:
+- Reading Shapefile data with pyshp
+- Converting SHP coordinates to Rhino geometry
+- Spatial analysis (point-in-polygon)
+- Matching parcels with buildings
+- Creating polylines from coordinate data
+
+Input:
+- Parcel shapefile path
+- Building shapefile path
+
+Make sure to install pyshp package first!</UserText>
+  </object>
+</grasshopper>

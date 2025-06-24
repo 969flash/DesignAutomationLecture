@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="400" h="200">
+    <properties colour="-1" name="Week 3 - Urban Analysis: Block Segmentation" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="280" h="140">
+    <properties colour="-1" name="Urban Block Script" selected="false" />
+    <inputs count="0" />
+    <outputs count="2">
+      <output guid="1" name="blocks" optional="false" />
+      <output guid="2" name="centroids" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Define urban blocks as polylines
+blocks = [
+    geo.Polyline([
+        geo.Point3d(0,0,0), 
+        geo.Point3d(0,10,0), 
+        geo.Point3d(10,10,0), 
+        geo.Point3d(10,0,0), 
+        geo.Point3d(0,0,0)
+    ]),
+    geo.Polyline([
+        geo.Point3d(12,0,0), 
+        geo.Point3d(12,10,0), 
+        geo.Point3d(20,10,0), 
+        geo.Point3d(20,0,0), 
+        geo.Point3d(12,0,0)
+    ])
+]
+
+centroids = []
+
+for blk in blocks:
+    # Add block to Rhino
+    sc.doc.Objects.AddPolyline(blk)
+    
+    # Calculate centroid
+    total_x = sum([pt.X for pt in blk])
+    total_y = sum([pt.Y for pt in blk])
+    total_z = sum([pt.Z for pt in blk])
+    centroid = geo.Point3d(total_x / len(blk), total_y / len(blk), total_z / len(blk))
+    
+    # Add centroid to Rhino
+    sc.doc.Objects.AddPoint(centroid)
+    centroids.append(centroid)
+
+sc.doc.Views.Redraw()
+
+print(f"Created {len(blocks)} urban blocks with centroids")
+
+# Output for Grasshopper
+blocks = blocks
+centroids = centroids
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="350" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 3 - Urban Block Segmentation
+
+This script demonstrates:
+- Creating urban block polygons
+- Polyline geometry creation
+- Centroid calculation
+- Geometric analysis of urban forms
+- Block-level urban design
+
+Outputs:
+- Urban block polylines
+- Block centroids
+
+This forms the basis for urban block analysis and subdivision.</UserText>
+  </object>
+</grasshopper>

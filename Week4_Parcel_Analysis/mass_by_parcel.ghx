@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="400" h="200">
+    <properties colour="-1" name="Week 4 - Parcel Analysis: Mass by Parcel" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="280" h="140">
+    <properties colour="-1" name="Mass by Parcel Script" selected="false" />
+    <inputs count="2">
+      <input guid="1" name="csv_file_path" optional="true" />
+      <input guid="2" name="height_factor" optional="true" />
+    </inputs>
+    <outputs count="1">
+      <output guid="1" name="building_masses" optional="false" />
+    </outputs>
+    <Script_Code>import csv
+import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Set default values
+if not csv_file_path:
+    csv_path = 'parcels.csv'
+else:
+    csv_path = csv_file_path
+
+if not height_factor:
+    factor = 0.1
+else:
+    factor = height_factor
+
+building_masses = []
+
+try:
+    with open(csv_path) as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            # Parse center coordinates
+            center = geo.Point3d(*eval(row['center']))
+            area = float(row['area'])
+            
+            # Calculate height based on area
+            height = area * factor
+            
+            # Create building mass as box
+            box = geo.Box(
+                geo.Plane(center), 
+                geo.Interval(-5,5), 
+                geo.Interval(-5,5), 
+                geo.Interval(0,height)
+            )
+            
+            # Add to Rhino document
+            sc.doc.Objects.AddBox(box)
+            building_masses.append(box)
+    
+    sc.doc.Views.Redraw()
+    print(f"Created {len(building_masses)} building masses from parcel data")
+
+except FileNotFoundError:
+    print(f"CSV file not found: {csv_path}")
+    print("Creating sample data instead...")
+    
+    # Create sample building masses
+    for i in range(5):
+        center = geo.Point3d(i*15, 0, 0)
+        height = (i+1) * 10
+        box = geo.Box(
+            geo.Plane(center), 
+            geo.Interval(-5,5), 
+            geo.Interval(-5,5), 
+            geo.Interval(0,height)
+        )
+        sc.doc.Objects.AddBox(box)
+        building_masses.append(box)
+    
+    sc.doc.Views.Redraw()
+
+except Exception as e:
+    print(f"Error: {e}")
+    building_masses = []
+
+# Output for Grasshopper
+building_masses = building_masses
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="350" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 4 - Mass by Parcel
+
+This script demonstrates:
+- Reading CSV data files
+- Data-driven geometry generation
+- Parcel-based building mass creation
+- Height calculation from area data
+- Box geometry creation
+
+Inputs:
+- CSV file path (default: 'parcels.csv')
+- Height factor (default: 0.1)
+
+CSV should contain 'center' and 'area' columns.</UserText>
+  </object>
+</grasshopper>

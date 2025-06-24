@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="350" h="200">
+    <properties colour="-1" name="Week 3 - Urban Analysis: Isovist Rays" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="250" h="140">
+    <properties colour="-1" name="Isovist Rays Script" selected="false" />
+    <inputs count="3">
+      <input guid="1" name="center_point" optional="true" />
+      <input guid="2" name="ray_length" optional="true" />
+      <input guid="3" name="angle_step" optional="true" />
+    </inputs>
+    <outputs count="2">
+      <output guid="1" name="rays" optional="false" />
+      <output guid="2" name="center" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+import math
+
+# Set default values if not provided
+if not center_point:
+    center = geo.Point3d(0, 0, 0)
+else:
+    center = center_point
+
+if not ray_length:
+    length = 100
+else:
+    length = ray_length
+
+if not angle_step:
+    step = 10
+else:
+    step = angle_step
+
+# Generate isovist rays
+rays = []
+num_rays = int(360 / step)
+
+for i in range(num_rays):
+    angle = math.radians(i * step)
+    dir = geo.Vector3d(math.cos(angle), math.sin(angle), 0)
+    line = geo.Line(center, dir * length)
+    rays.append(line)
+    
+    # Add to Rhino document
+    sc.doc.Objects.AddLine(line)
+
+# Add center point
+sc.doc.Objects.AddPoint(center)
+sc.doc.Views.Redraw()
+
+print(f"Generated {len(rays)} isovist rays from center point")
+
+# Output for Grasshopper
+rays = rays
+center = center
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="320" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 3 - Isovist Analysis
+
+This script demonstrates:
+- Creating radial ray patterns
+- Mathematical angle calculations
+- Vector direction computation
+- Visibility analysis setup
+- Line geometry creation
+
+Inputs:
+- Center point (default: origin)
+- Ray length (default: 100)
+- Angle step (default: 10 degrees)
+
+Used for visibility and isovist analysis in urban design.</UserText>
+  </object>
+</grasshopper>

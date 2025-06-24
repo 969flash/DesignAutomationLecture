@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>3</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="400" h="200">
+    <properties colour="-1" name="Week 5 - Advanced Terrain: View Slope Adjustment" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="280" h="140">
+    <properties colour="-1" name="View Slope Adjust Script" selected="false" />
+    <inputs count="3">
+      <input guid="1" name="num_buildings" optional="true" />
+      <input guid="2" name="spacing" optional="true" />
+      <input guid="3" name="height_factor" optional="true" />
+    </inputs>
+    <outputs count="2">
+      <output guid="1" name="buildings" optional="false" />
+      <output guid="2" name="base_points" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Set default values
+if not num_buildings:
+    count = 10
+else:
+    count = num_buildings
+
+if not spacing:
+    space = 10
+else:
+    space = spacing
+
+if not height_factor:
+    factor = 0.8
+else:
+    factor = height_factor
+
+buildings = []
+base_points = []
+
+# Generate buildings with slope-adjusted heights
+for x in range(count):
+    # Create base point with slope
+    base_pt = geo.Point3d(x * space, 0, x * 2)
+    base_points.append(base_pt)
+    
+    # Calculate adjusted height based on slope and factor
+    height = base_pt.Z * factor
+    
+    # Create building as box
+    box = geo.Box(
+        geo.Plane(base_pt), 
+        geo.Interval(-2, 2), 
+        geo.Interval(-2, 2), 
+        geo.Interval(0, height)
+    )
+    
+    buildings.append(box)
+    
+    # Add to Rhino document
+    sc.doc.Objects.AddBox(box)
+    sc.doc.Objects.AddPoint(base_pt)
+
+sc.doc.Views.Redraw()
+
+print(f"Created {len(buildings)} buildings with slope-adjusted heights")
+
+# Output for Grasshopper
+buildings = buildings
+base_points = base_points
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="350" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 5 - View Slope Adjustment
+
+This script demonstrates:
+- Terrain-responsive design
+- Height adjustment based on slope
+- Parametric building placement
+- Topographical considerations
+- Advanced geometric relationships
+
+Inputs:
+- Number of buildings (default: 10)
+- Spacing between buildings (default: 10)
+- Height factor (default: 0.8)
+
+Buildings adjust their height based on terrain slope.</UserText>
+  </object>
+</grasshopper>
