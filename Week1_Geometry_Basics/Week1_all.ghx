@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='utf-8'?>
+<grasshopper>
+  <version>1.0.0006</version>
+  <thumbnail>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</thumbnail>
+  <zoom_on_load>true</zoom_on_load>
+  <origin_on_load>true</origin_on_load>
+  <object_count>9</object_count>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="300" h="200">
+    <properties colour="-1" name="Week 1 - Points and Vectors" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="240" h="140">
+    <properties colour="-1" name="Points and Vectors Script" selected="false" />
+    <inputs count="0" />
+    <outputs count="2">
+      <output guid="1" name="base_point" optional="false" />
+      <output guid="2" name="moved_point" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+import Rhino
+
+# Create base point and vector
+base = geo.Point3d(0, 0, 0)
+vec = geo.Vector3d(10, 5, 3)
+moved = base + vec
+
+# Output points for Grasshopper
+base_point = base
+moved_point = moved
+
+# Add to Rhino document
+sc.doc.Objects.AddPoint(base)
+sc.doc.Objects.AddPoint(moved)
+sc.doc.Views.Redraw()
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="320" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 1 - Points and Vectors
+
+This script demonstrates:
+- Creating Point3d objects
+- Creating Vector3d objects  
+- Vector addition with points
+- Adding geometry to Rhino document
+
+Run this script to see basic point and vector operations in Rhino.</UserText>
+  </object>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="300" h="200">
+    <properties colour="-1" name="Week 1 - Curves and Surfaces" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="240" h="140">
+    <properties colour="-1" name="Curves and Surfaces Script" selected="false" />
+    <inputs count="0" />
+    <outputs count="2">
+      <output guid="1" name="curve" optional="false" />
+      <output guid="2" name="surface" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Create points for curve
+pts = [geo.Point3d(i, i*i*0.1, 0) for i in range(-5, 6)]
+
+# Create NURBS curve
+curve = geo.NurbsCurve.Create(False, 3, pts)
+
+# Create extruded surface
+surface = geo.Surface.CreateExtrusion(curve, geo.Vector3d(0,0,5))
+
+# Add to Rhino document
+sc.doc.Objects.AddCurve(curve)
+sc.doc.Objects.AddSurface(surface)
+sc.doc.Views.Redraw()
+
+# Output for Grasshopper
+curve = curve
+surface = surface
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="320" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 1 - Curves and Surfaces
+
+This script demonstrates:
+- Creating points from mathematical functions
+- Creating NURBS curves from point lists
+- Creating extruded surfaces from curves
+- Adding curves and surfaces to Rhino
+
+Run this script to see curve and surface creation.</UserText>
+  </object>
+  <object guid="59e0b89a-e487-49f8-bab4-b5bde29d0710" type="Grasshopper.Kernel.Special.GH_Group" x="20" y="20" w="300" h="200">
+    <properties colour="-1" name="Week 1 - Brep and Transform" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+  </object>
+  <object guid="c552a431-2f8c-4e3b-a79c-6e4a6b0ac3a3" type="Grasshopper.Kernel.Special.GH_ScriptInstance" x="50" y="50" w="240" h="140">
+    <properties colour="-1" name="Brep Transform Script" selected="false" />
+    <inputs count="0" />
+    <outputs count="2">
+      <output guid="1" name="original_brep" optional="false" />
+      <output guid="2" name="transformed_brep" optional="false" />
+    </outputs>
+    <Script_Code>import Rhino.Geometry as geo
+import scriptcontext as sc
+
+# Create sphere and convert to Brep
+sphere = geo.Sphere(geo.Point3d(0,0,0), 5)
+brep = geo.Brep.CreateFromSphere(sphere)
+
+# Create transformation matrix
+xform = geo.Transform.Translation(10, 0, 0)
+
+# Duplicate and transform brep
+brep_x = brep.Duplicate()
+brep_x.Transform(xform)
+
+# Add to Rhino document
+sc.doc.Objects.AddBrep(brep)
+sc.doc.Objects.AddBrep(brep_x)
+sc.doc.Views.Redraw()
+
+# Output for Grasshopper
+original_brep = brep
+transformed_brep = brep_x
+</Script_Code>
+  </object>
+  <object guid="c3429c53-dd46-4f88-9cb0-6c6a6b2e8a89" type="Grasshopper.Kernel.Special.GH_Panel" x="320" y="50" w="200" h="140">
+    <properties colour="-1" name="Instructions" selected="false" />
+    <attributes>
+      <pivot>0</pivot>
+    </attributes>
+    <UserText>Week 1 - Brep and Transform
+
+This script demonstrates:
+- Creating Brep from geometric primitives
+- Creating transformation matrices
+- Duplicating geometry objects
+- Applying transformations to Breps
+- Translation operations
+
+Run this script to see Brep creation and transformation.</UserText>
+  </object>
+</grasshopper>
